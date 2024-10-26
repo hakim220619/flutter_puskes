@@ -1,0 +1,21 @@
+[
+    {
+      "title": "Berita 1",
+      "description": "Deskripsi berita 1",
+      "date": "2024-10-26",
+      "imageUrl": "assets/images/600x400.png"
+    },
+    {
+      "title": "Berita 2",
+      "description": "Deskripsi berita 2",
+      "date": "2024-10-25",
+      "imageUrl": "assets/images/600x400.png"
+    },
+    {
+      "title": "Berita 3",
+      "description": "Deskripsi berita 3",
+      "date": "2024-10-24",
+      "imageUrl": "assets/images/600x400.png"
+    }
+  ]
+  
