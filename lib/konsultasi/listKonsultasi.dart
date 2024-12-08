@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+
 class ListKonsultasi extends StatefulWidget {
   const ListKonsultasi({
     Key? key,
@@ -29,31 +30,27 @@ class _ListKonsultasiState extends State<ListKonsultasi> {
         "Accept": "application/json",
         "Authorization": "Bearer $token",
       });
-      // print(response.body);
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        // print(data);
         setState(() {
           _listsData = data['data'];
-          // print(_listsData);
         });
       }
     } catch (e) {
-      // print(e);
+      // Handle errors here
     }
-  }
-
-  // Sample data for three lists
-  @override
-  void initState() {
-    super.initState();
-    listKonsultasi();
   }
 
   Future refresh() async {
     setState(() {
       listKonsultasi();
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    listKonsultasi();
   }
 
   @override
@@ -81,36 +78,60 @@ class _ListKonsultasiState extends State<ListKonsultasi> {
         onRefresh: refresh,
         child: ListView.builder(
           itemCount: _listsData.length,
-          itemBuilder: (context, index) => Card(
-            margin: const EdgeInsets.all(10.0),
-            child: ListTile(
-              title: Text(
-                "${_listsData[index]['name']}",
-                style: const TextStyle(
-                    fontSize: 15.0, fontWeight: FontWeight.bold),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              subtitle: Text(
-                "${_listsData[index]['nik']}",
-                maxLines: 2,
-                style: const TextStyle(fontSize: 14.0),
-                overflow: TextOverflow.ellipsis,
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => KonsultasiAdmin(
-                      id_ortu: _listsData[index]['id_ortu'].toString(),
+          itemBuilder: (context, index) {
+            return FutureBuilder<String?>(
+              future: _getImageFromSharedPreferences(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
+                String imageUrl = snapshot.data ?? ''; // Default to empty string if no image found
+
+                return Card(
+                  margin: const EdgeInsets.all(10.0),
+                  child: ListTile(
+                    leading: imageUrl.isNotEmpty
+                        ? CircleAvatar(
+                            backgroundImage: NetworkImage(imageUrl),
+                            radius: 30.0,
+                          )
+                        : const Icon(Icons.person, size: 30), // Fallback if no image
+                    title: Text(
+                      "${_listsData[index]['name']}",
+                      style: const TextStyle(
+                          fontSize: 15.0, fontWeight: FontWeight.bold),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
+                    subtitle: Text(
+                      "${_listsData[index]['nik']}",
+                      maxLines: 2,
+                      style: const TextStyle(fontSize: 14.0),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => KonsultasiAdmin(
+                            id_ortu: _listsData[index]['id_ortu'].toString(),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 );
               },
-            ),
-          ),
+            );
+          },
         ),
       ),
     );
+  }
+
+  // Function to retrieve image URL from SharedPreferences
+  Future<String?> _getImageFromSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('user_image'); // Replace 'user_image' with the correct key used to store the image URL
   }
 }

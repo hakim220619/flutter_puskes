@@ -20,7 +20,7 @@ class HttpService {
     http.Response response = await _client
         .post(_loginUrl, body: {"email": email, "password": password});
 
-    // print(response.body);
+    print(response.body);
     if (response.statusCode == 200) {
       // ignore: non_constant_identifier_names
 
@@ -62,7 +62,7 @@ class HttpService {
   }
 
   static final _registerUrl = Uri.parse('${dotenv.env['url']}/register');
-  static register(nik, name, email, password, address, jenis_kelamin, tanggal_lahir, nama_ortu, context) async {
+  static register(nik, name, email, password, address, jenis_kelamin, tanggal_lahir, nama_ortu,role, context) async {
         EasyLoading.show(status: 'loading...');
     http.Response response = await _client.post(_registerUrl, body: {
       "nik": nik,
@@ -73,6 +73,7 @@ class HttpService {
       "jenis_kelamin": jenis_kelamin,
       "tanggal_lahir": tanggal_lahir.text,
       "nama_ortu": nama_ortu,
+      "role": role,
     });
     if (response.statusCode == 200) {
       var json = jsonDecode(response.body.toString());

@@ -21,6 +21,8 @@ class _RegisterPageState extends State<RegisterPage> {
   late String tb_lahir;
   late String nama_ortu;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+    String? role;
   @override
   // ignore: override_on_non_overriding_member
   bool _passwordVisible = false;
@@ -41,6 +43,10 @@ class _RegisterPageState extends State<RegisterPage> {
     final List<String> nameList = <String>[
       "Laki-Laki",
       "Perempuan",
+    ];
+     final List<Map<String, String>> roleList = [
+      {"value": "2", "name": "Orang Tua Bayi"},
+      {"value": "3", "name": "Bidan"},
     ];
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -258,7 +264,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     SizedBox(
                       height: 10,
                     ),
-                    
                     TextFormField(
                       obscureText: false,
                       validator: (value) {
@@ -281,6 +286,39 @@ class _RegisterPageState extends State<RegisterPage> {
                         });
                       },
                     ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.supervised_user_circle_rounded),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        hintText: 'Role',
+                      ),
+                      isExpanded: true,
+                      items: roleList.map(
+                        (role) {
+                          return DropdownMenuItem<String>(
+                            value: role["value"], // Use the correct value
+                            child: Text(role["name"]!), // Display the name
+                          );
+                        },
+                      ).toList(),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Silahkan Masukkan Data';
+                        }
+                        return null;
+                      },
+                      value: role, // Ensure this matches a valid value from roleList
+                      onChanged: (vale) {
+                        setState(() {
+                          role = vale; // Update the selected value
+                        });
+                      },
+                    ),
                     const SizedBox(
                       height: 20,
                     ),
@@ -296,6 +334,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 jenis_kelamin,
                                 tanggal_lahir,
                                 nama_ortu,
+                                role,
                                 context);
                           }
                         },

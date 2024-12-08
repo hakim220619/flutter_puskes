@@ -42,7 +42,7 @@ class _NewsListScreenState extends State<NewsListScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Image.network(newsItem['imageUrl']),
+                      // Image.network(newsItem['imageUrl']),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(

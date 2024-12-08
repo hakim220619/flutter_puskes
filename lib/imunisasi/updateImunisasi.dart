@@ -19,8 +19,7 @@ class ImunisasiUsersAdminById extends StatefulWidget {
       required this.anak_ke,
       required this.jadwal_mendatang,
       required this.tahun,
-      required this.namaBulan
-      })
+      required this.namaBulan})
       : super(key: key);
 
   final String id;
@@ -42,6 +41,7 @@ class _ImunisasiUsersAdminByIdState extends State<ImunisasiUsersAdminById> {
   String? anakke = '';
   String? selectedJenisVaksin = '';
   var jenisVaksin;
+  String? userRole;
   @override
   void dispose() {
     _formKey.currentState?.dispose();
@@ -53,14 +53,20 @@ class _ImunisasiUsersAdminByIdState extends State<ImunisasiUsersAdminById> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _getUserRole();
   }
 
   TextEditingController jadwalMendatang = TextEditingController();
   TextEditingController tanggalVaksin = TextEditingController();
+  Future<void> _getUserRole() async {
+    profileData = await SharedPreferences.getInstance();
+    setState(() {
+      userRole =
+          profileData.getString('role'); // Ambil role dari SharedPreferences
+    });
+  }
 
   Widget build(BuildContext context) {
-
-
     final List<String> nameList = <String>[
       "imunisasi Bcg Polio",
       "imunisasi DPT-HB-Hib 1 polio 2",
@@ -288,60 +294,76 @@ class _ImunisasiUsersAdminByIdState extends State<ImunisasiUsersAdminById> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        InkWell(
-                            onTap: () async {
-                              print(selectedJenisVaksin);
-                              if (_formKey.currentState!.validate()) {
-                                await HttpServiceImunisasi.updateImunisasi(
-                                    widget.id.toString(),
-                                    tanggalVaksin.text == '' ? widget.tanggal_vaksin : tanggalVaksin.text,
-                                    anakke == '' ? widget.anak_ke : anakke.toString(),
-                                    selectedJenisVaksin == '' ? widget.jenis_vaksin : selectedJenisVaksin,
-                                    jadwalMendatang.text == '' ? widget.jadwal_mendatang : jadwalMendatang.text,
-                                    context);
-                              }
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 1, vertical: 10),
-                              child: const Center(
-                                child: Text(
-                                  "Update",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
+                        if (userRole == '1') // Hanya tampilkan jika role = 1
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              InkWell(
+                                onTap: () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    await HttpServiceImunisasi.updateImunisasi(
+                                      widget.id.toString(),
+                                      tanggalVaksin.text.isEmpty
+                                          ? widget.tanggal_vaksin
+                                          : tanggalVaksin.text,
+                                      anakke!.isEmpty
+                                          ? widget.anak_ke
+                                          : anakke.toString(),
+                                      selectedJenisVaksin!.isEmpty
+                                          ? widget.jenis_vaksin
+                                          : selectedJenisVaksin,
+                                      jadwalMendatang.text.isEmpty
+                                          ? widget.jadwal_mendatang
+                                          : jadwalMendatang.text,
+                                      context,
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 1, vertical: 10),
+                                  child: const Center(
+                                    child: Text(
+                                      "Update",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                  height: 50,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                      color: Colors.blue,
+                                      borderRadius: BorderRadius.circular(10)),
                                 ),
                               ),
-                              height: 50,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                  color: Colors.blue,
-                                  borderRadius: BorderRadius.circular(10)),
-                            )),
-                        InkWell(
-                            onTap: () async {
-                              if (_formKey.currentState!.validate()) {
-                                await HttpServiceImunisasi.delete(
-                                    widget.id.toString(), context);
-                              }
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 1, vertical: 10),
-                              child: const Center(
-                                child: Text(
-                                  "Delete",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
+                              InkWell(
+                                onTap: () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    await HttpServiceImunisasi.delete(
+                                        widget.id.toString(), context);
+                                  }
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 1, vertical: 10),
+                                  child: const Center(
+                                    child: Text(
+                                      "Delete",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                  height: 50,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(10)),
                                 ),
                               ),
-                              height: 50,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(10)),
-                            ))
+                            ],
+                          )
                       ],
                     )
                   ],

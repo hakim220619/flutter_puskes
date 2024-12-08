@@ -25,6 +25,8 @@ class ListPenimbanganById extends StatefulWidget {
 List _listsData = [];
 
 class _ListPenimbanganByIdState extends State<ListPenimbanganById> {
+  String? userRole;
+
   Future<dynamic> ListPenimbangan() async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -39,22 +41,27 @@ class _ListPenimbanganByIdState extends State<ListPenimbanganById> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        // print(data);
         setState(() {
           _listsData = data['data'];
-          print(_listsData);
         });
       }
     } catch (e) {
-      // print(e);
+      print(e);
     }
   }
 
-  // Sample data for three lists
+  Future<void> getUserRole() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      userRole = preferences.getString('role');
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     ListPenimbangan();
+    getUserRole();
   }
 
   Future refresh() async {
@@ -64,18 +71,43 @@ class _ListPenimbanganByIdState extends State<ListPenimbanganById> {
   }
 
   void addPenimbangan() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (BuildContext context) => AddPenimbanganPage(
-                id: widget.id.toString(),
-              )),
-    );
+    if (userRole == '1') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) => AddPenimbanganPage(
+                  id: widget.id.toString(),
+                )),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Anda tidak memiliki akses untuk menambah penimbangan')),
+      );
+    }
+  }
+
+  void navigateToPenimbanganPage(Map<String, dynamic> data) {
+    if (userRole == '1') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PenimbanganPage(
+            id: data['id'].toString(),
+            id_user: data['id_user'].toString(),
+            bblahir: data['bb_lahir'].toString(),
+            tblahir: data['tb_lahir'].toString(),
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Anda tidak memiliki akses untuk melihat detail penimbangan')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -90,7 +122,7 @@ class _ListPenimbanganByIdState extends State<ListPenimbanganById> {
           },
           child: const Icon(
             Icons.arrow_back_ios,
-            color: Color.fromARGB(253, 255, 252, 252),
+            color: Colors.white,
           ),
         ),
         backgroundColor: Colors.blue[300],
@@ -117,30 +149,20 @@ class _ListPenimbanganByIdState extends State<ListPenimbanganById> {
                     style: const TextStyle(fontSize: 14.0),
                     overflow: TextOverflow.ellipsis,
                   ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PenimbanganPage(
-                          id: _listsData[index]['id'].toString(),
-                          id_user: _listsData[index]['id_user'].toString(),
-                          bblahir: _listsData[index]['bb_lahir'].toString(),
-                          tblahir: _listsData[index]['tb_lahir'].toString(),
-                        ),
-                      ),
-                    );
-                  },
+                  onTap: () => navigateToPenimbanganPage(_listsData[index]),
                 ),
               ],
             ),
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: addPenimbangan,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: userRole == '1'
+          ? FloatingActionButton(
+              onPressed: addPenimbangan,
+              tooltip: 'Tambah Penimbangan',
+              child: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 }
