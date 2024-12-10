@@ -16,6 +16,8 @@ class DatabAyiPage extends StatefulWidget {
 List _listsData = [];
 
 class _DatabAyiPageState extends State<DatabAyiPage> {
+  int? selectedYear;
+  int? selectedMonth;
   Future<void> listKeluhan() async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -57,54 +59,107 @@ class _DatabAyiPageState extends State<DatabAyiPage> {
     }
   }
 
-  Future<void> cetakPdf(String selectedMonth) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    var token = preferences.getString('token');
-    var url = Uri.parse('${dotenv.env['url']}/exportPdf?month=$selectedMonth'); // Add the selected month in the query
-    final response = await http.get(url, headers: {
-      "Accept": "application/json",
-      "Authorization": "Bearer $token",
-    });
-    print(selectedMonth);
-    print(response.body);
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      _launchURL(data['file']);
-    }
+ Future<void> cetakPdf(String selectedMonth, String selectedYear) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  var token = preferences.getString('token');
+  var url = Uri.parse(
+      '${dotenv.env['url']}/exportPdf?month=$selectedMonth&year=$selectedYear'); // Menambahkan tahun ke query
+  final response = await http.get(url, headers: {
+    "Accept": "application/json",
+    "Authorization": "Bearer $token",
+  });
+  print(selectedMonth);
+  print(selectedYear);
+  print(response.body);
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body);
+    _launchURL(data['file']);
   }
+}
 
   // Show month selection dialog
-  void _showMonthSelectionDialog() {
+  void _showYearAndMonthSelectionDialog() {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.all(20.0),
-          height: 300.0,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Select Month',
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: 12,
-                  itemBuilder: (context, index) {
-                    String month = _getMonthName(index);
-                    return ListTile(
-                      title: Text(month),
-                      onTap: () {
-                        Navigator.pop(context); // Close the dialog
-                        cetakPdf(month); // Call cetakPdf with the selected month
+        return StatefulBuilder(
+          // Gunakan StatefulBuilder untuk memperbarui UI saat setState
+          builder: (context, setState) {
+            return Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0), // responsive horizontal padding
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Select Year and Month',
+                    style:
+                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 20.0),
+
+                  // Year selection
+                  const Text('Select Year', style: TextStyle(fontSize: 16.0)),
+                  Container(
+                    width:
+                        double.infinity, // Ensure full width for the dropdown
+                    child: DropdownButton<int>(
+                      hint: const Text('Select Year'),
+                      value: selectedYear,
+                      onChanged: (int? newYear) {
+                        setState(() {
+                          selectedYear = newYear;
+                          selectedMonth =
+                              null; // Reset the month when the year is changed
+                        });
                       },
-                    );
-                  },
-                ),
+                      items: List.generate(5, (index) {
+                        int year = DateTime.now().year - index;
+                        return DropdownMenuItem<int>(
+                          value: year,
+                          child: Text(year.toString()),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20.0),
+
+                  // Month selection (only show if a year is selected)
+                  if (selectedYear != null) ...[
+                    const Text('Select Month',
+                        style: TextStyle(fontSize: 16.0)),
+                    Container(
+                      width:
+                          double.infinity, // Ensure full width for the dropdown
+                      child: DropdownButton<int>(
+                        hint: const Text('Select Month'),
+                        value: selectedMonth,
+                        onChanged: (int? newMonth) {
+                          setState(() {
+                            selectedMonth = newMonth;
+                          });
+                          Navigator.pop(context); // Close the dialog
+                          if (selectedYear != null && selectedMonth != null) {
+                            cetakPdf(selectedMonth
+                                .toString(), selectedYear.toString()); // Call cetakPdf with the selected year and month
+                          }
+                        },
+                        items: List.generate(12, (index) {
+                          String month = _getMonthName(index);
+                          return DropdownMenuItem<int>(
+                            value: index + 1,
+                            child: Text(month),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -112,8 +167,18 @@ class _DatabAyiPageState extends State<DatabAyiPage> {
 
   String _getMonthName(int index) {
     List<String> months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
     ];
     return months[index];
   }
@@ -136,7 +201,8 @@ class _DatabAyiPageState extends State<DatabAyiPage> {
             TextButton(
               onPressed: () async {
                 Navigator.of(context).pop(); // Close the dialog
-                await deleteUserData(_listsData[index]['id']); // Pass the user ID
+                await deleteUserData(
+                    _listsData[index]['id']); // Pass the user ID
               },
               child: const Text('Delete'),
             ),
@@ -159,7 +225,8 @@ class _DatabAyiPageState extends State<DatabAyiPage> {
       print(response.body);
       if (response.statusCode == 200) {
         setState(() {
-          _listsData.removeWhere((user) => user['id'] == id); // Remove the user from the list
+          _listsData.removeWhere(
+              (user) => user['id'] == id); // Remove the user from the list
         });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Data deleted successfully!')),
@@ -185,8 +252,8 @@ class _DatabAyiPageState extends State<DatabAyiPage> {
         centerTitle: true,
         leading: InkWell(
           onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => const Homepage()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const Homepage()));
           },
           child: const Icon(Icons.arrow_back_ios),
         ),
@@ -197,7 +264,8 @@ class _DatabAyiPageState extends State<DatabAyiPage> {
         child: ListView.builder(
           itemCount: _listsData.length,
           itemBuilder: (context, index) => GestureDetector(
-            onLongPress: () => _showDeleteConfirmationDialog(index), // Trigger long press dialog
+            onLongPress: () => _showDeleteConfirmationDialog(
+                index), // Trigger long press dialog
             child: Card(
               margin: const EdgeInsets.all(10.0),
               child: Column(
@@ -223,8 +291,9 @@ class _DatabAyiPageState extends State<DatabAyiPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showMonthSelectionDialog, // Show month selection dialog
-        tooltip: 'Select Month for PDF',
+        onPressed:
+            _showYearAndMonthSelectionDialog, // Show year and month selection dialog
+        tooltip: 'Select Year and Month for PDF',
         child: const Icon(Icons.picture_as_pdf),
       ),
     );

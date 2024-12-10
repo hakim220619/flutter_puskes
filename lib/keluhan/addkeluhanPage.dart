@@ -32,7 +32,7 @@ class _AddKeluhanPageState extends State<AddKeluhanPage> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Keluhan'),
+          title: const Text('Rujukan'),
           leading: IconButton(
             icon: Icon(Icons.chevron_left),
             onPressed: () => Navigator.pop(context, false),

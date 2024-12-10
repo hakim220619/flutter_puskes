@@ -220,7 +220,7 @@ class _ImunisasiUsersAdminByIdState extends State<ImunisasiUsersAdminById> {
                             context: context,
                             initialDate: DateTime.now(),
                             firstDate: DateTime(1999),
-                            lastDate: DateTime.now());
+                            lastDate: DateTime(3022));
                         if (date == null) {
                           tanggalVaksin.text = widget.tanggal_vaksin;
                         } else {
@@ -278,7 +278,7 @@ class _ImunisasiUsersAdminByIdState extends State<ImunisasiUsersAdminById> {
                         var date = await showDatePicker(
                             context: context,
                             initialDate: DateTime.now(),
-                            firstDate: DateTime.now(),
+                            firstDate: DateTime(1999),
                             lastDate: DateTime(2100));
                         if (date == null) {
                           jadwalMendatang.text = widget.jadwal_mendatang;

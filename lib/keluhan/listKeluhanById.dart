@@ -70,7 +70,7 @@ class _ListKeluhanAdminByIdState extends State<ListKeluhanAdminById> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'List Keluhan',
+          'List Rujukan',
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,

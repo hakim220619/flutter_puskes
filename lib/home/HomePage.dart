@@ -544,7 +544,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                     ),
                     ListTile(
-                      title: const Text('Keluhan'),
+                      title: const Text('Rujukan'),
                       selected: _selectedIndex == 1,
                       onTap: () {
                         // Update the state of the app
@@ -703,6 +703,20 @@ class _MyHomePageState extends State<MyHomePage> {
                                 builder: (context) => KonsultasiOrtu()));
                       },
                     ),
+                    ListTile(
+                      title: const Text('Rujukan'),
+                      selected: _selectedIndex == 0,
+                      onTap: () {
+                        // Update the state of the app
+                        // _onItemTapped(0);
+                        // Then close the drawer
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const KeluhanPage()));
+                      },
+                    )
                   ])
                 : const Text(''),
             role == '3'
@@ -718,7 +732,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                     ),
                     ListTile(
-                      title: const Text('Keluhan'),
+                      title: const Text('Rujukan'),
                       selected: _selectedIndex == 0,
                       onTap: () {
                         // Update the state of the app

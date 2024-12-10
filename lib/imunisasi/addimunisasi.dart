@@ -245,7 +245,7 @@ class _AddImunisasiState extends State<AddImunisasi> {
                             context: context,
                             initialDate: DateTime.now(),
                             firstDate: DateTime(1999),
-                            lastDate: DateTime.now());
+                            lastDate: DateTime(2100));
                         if (date == null) {
                           tanggalVaksin.text = "";
                         } else {

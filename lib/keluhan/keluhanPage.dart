@@ -123,7 +123,7 @@ class _KeluhanPageState extends State<KeluhanPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Keluhan',
+          'Rujukan',
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
@@ -158,7 +158,7 @@ class _KeluhanPageState extends State<KeluhanPage> {
                   const ListTile(
                     leading: Icon(Icons.wysiwyg),
                     title: Text(
-                        'Pertanyaan'),
+                        'Rujukan'),
                   ),
                   const Divider(),
                   ListView.builder(

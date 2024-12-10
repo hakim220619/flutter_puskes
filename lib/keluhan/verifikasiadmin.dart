@@ -61,7 +61,7 @@ class _VerifikasiAdminState extends State<VerifikasiAdmin> {
       home: Scaffold(
         appBar: AppBar(
           title: Text(
-            'Keluhan',
+            'Rujukan',
             style: TextStyle(color: Colors.white),
           ),
           leading: IconButton(
