@@ -18,10 +18,12 @@ class HttpServiceChat {
      var token = preferences.getString('token');
      var id_ortu = preferences.getString('id');
      var role = preferences.getString('role');
+     var id = preferences.getString('id');
+
     // print(id_ortu);
     EasyLoading.show(status: 'loading...');
     http.Response response = await _client
-        .post(_loginUrl, body: {"msg": message, "id_ortu": id_ortu, "id_admin": '1', "role": role});
+        .post(_loginUrl, body: {"msg": message, "id_ortu": id_ortu, "id_admin": '2', "role": role});
 
     // print(response.body);
     if (response.statusCode == 200) {
@@ -42,10 +44,11 @@ class HttpServiceChat {
     SharedPreferences preferences = await SharedPreferences.getInstance();
      var token = preferences.getString('token');
      var role = preferences.getString('role');
+     var id = preferences.getString('id');
     // print(id_ortu);
     EasyLoading.show(status: 'loading...');
     http.Response response = await _client
-        .post(_loginUrl, body: {"msg": message, "id_ortu": id_ortu, "id_admin": '1', "role": role});
+        .post(_loginUrl, body: {"msg": message, "id_ortu": id_ortu, "id_admin": id, "role": role});
 
     // print(response.body);
     if (response.statusCode == 200) {

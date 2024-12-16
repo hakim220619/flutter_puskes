@@ -523,26 +523,26 @@ class _MyHomePageState extends State<MyHomePage> {
                         Navigator.pop(context);
                       },
                     ),
-                    ListTile(
-                      title: const Text('Konsultasi'),
-                      selected: _selectedIndex == 1,
-                      onTap: () {
-                        // Update the state of the app
-                        // _onItemTapped(1);
-                        // Then close the drawer
-                        // if (roleid == '3') {
-                        //   Navigator.push(
-                        //       context,
-                        //       MaterialPageRoute(
-                        //           builder: (context) => const KelasPage(keyword: 'nilaisiswa')));
-                        // } else if (roleid == '2') {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ListKonsultasi()));
-                        // }
-                      },
-                    ),
+                    // ListTile(
+                    //   title: const Text('Konsultasi'),
+                    //   selected: _selectedIndex == 1,
+                    //   onTap: () {
+                    //     // Update the state of the app
+                    //     // _onItemTapped(1);
+                    //     // Then close the drawer
+                    //     // if (roleid == '3') {
+                    //     //   Navigator.push(
+                    //     //       context,
+                    //     //       MaterialPageRoute(
+                    //     //           builder: (context) => const KelasPage(keyword: 'nilaisiswa')));
+                    //     // } else if (roleid == '2') {
+                    //     Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //             builder: (context) => ListKonsultasi()));
+                    //     // }
+                    //   },
+                    // ),
                     ListTile(
                       title: const Text('Rujukan'),
                       selected: _selectedIndex == 1,
@@ -744,7 +744,27 @@ class _MyHomePageState extends State<MyHomePage> {
                                 builder: (context) =>
                                     const ListKeluhanUsers()));
                       },
-                    )
+                    ),
+                    ListTile(
+                      title: const Text('Konsultasi'),
+                      selected: _selectedIndex == 1,
+                      onTap: () {
+                        // Update the state of the app
+                        // _onItemTapped(1);
+                        // Then close the drawer
+                        // if (roleid == '3') {
+                        //   Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //           builder: (context) => const KelasPage(keyword: 'nilaisiswa')));
+                        // } else if (roleid == '2') {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ListKonsultasi()));
+                        // }
+                      },
+                    ),
                   ])
                 : const Text('')
           ],

@@ -38,9 +38,10 @@ class _KonsultasiAdminState extends State<KonsultasiAdmin> {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       var token = preferences.getString('token');
+      var id = preferences.getString('id');
       // print(widget.id_ortu);
       var url =
-          Uri.parse('${dotenv.env['url']}/messages?id_admin=1&id_ortu=${widget.id_ortu.toString()}');
+          Uri.parse('${dotenv.env['url']}/messages?id_admin=2&id_ortu=${widget.id_ortu.toString()}');
       final response = await http.get(url, headers: {
         "Accept": "application/json",
         "Authorization": "Bearer $token",
