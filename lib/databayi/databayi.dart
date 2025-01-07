@@ -29,6 +29,8 @@ class _DatabAyiPageState extends State<DatabAyiPage> {
       });
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        print(data);
+
         setState(() {
           _listsData = data['data'];
         });
@@ -59,23 +61,23 @@ class _DatabAyiPageState extends State<DatabAyiPage> {
     }
   }
 
- Future<void> cetakPdf(String selectedMonth, String selectedYear) async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  var token = preferences.getString('token');
-  var url = Uri.parse(
-      '${dotenv.env['url']}/exportPdf?month=$selectedMonth&year=$selectedYear'); // Menambahkan tahun ke query
-  final response = await http.get(url, headers: {
-    "Accept": "application/json",
-    "Authorization": "Bearer $token",
-  });
-  print(selectedMonth);
-  print(selectedYear);
-  print(response.body);
-  if (response.statusCode == 200) {
-    final data = jsonDecode(response.body);
-    _launchURL(data['file']);
+  Future<void> cetakPdf(String selectedMonth, String selectedYear) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    var token = preferences.getString('token');
+    var url = Uri.parse(
+        '${dotenv.env['url']}/exportPdf?month=$selectedMonth&year=$selectedYear'); // Menambahkan tahun ke query
+    final response = await http.get(url, headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer $token",
+    });
+    print(selectedMonth);
+    print(selectedYear);
+    print(response.body);
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      _launchURL(data['file']);
+    }
   }
-}
 
   // Show month selection dialog
   void _showYearAndMonthSelectionDialog() {
@@ -142,8 +144,10 @@ class _DatabAyiPageState extends State<DatabAyiPage> {
                           });
                           Navigator.pop(context); // Close the dialog
                           if (selectedYear != null && selectedMonth != null) {
-                            cetakPdf(selectedMonth
-                                .toString(), selectedYear.toString()); // Call cetakPdf with the selected year and month
+                            cetakPdf(
+                                selectedMonth.toString(),
+                                selectedYear
+                                    .toString()); // Call cetakPdf with the selected year and month
                           }
                         },
                         items: List.generate(12, (index) {
@@ -281,7 +285,107 @@ class _DatabAyiPageState extends State<DatabAyiPage> {
                       style: const TextStyle(fontSize: 14.0),
                     ),
                     onTap: () {
-                      // Handle navigation to another screen
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text("Detail"),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("Nama:",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold)),
+                                  Text("${_listsData[index]['name']}",
+                                      style: TextStyle(fontSize: 14)),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("Email:",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold)),
+                                  Text("${_listsData[index]['email']}",
+                                      style: TextStyle(fontSize: 14)),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("NIK:",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold)),
+                                  Text("${_listsData[index]['nik']}",
+                                      style: TextStyle(fontSize: 14)),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("Alamat:",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold)),
+                                  Text("${_listsData[index]['address']}",
+                                      style: TextStyle(fontSize: 14)),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("Jenis Kelamin:",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold)),
+                                  Text("${_listsData[index]['jenis_kelamin']}",
+                                      style: TextStyle(fontSize: 14)),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("Tanggal Lahir:",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold)),
+                                  Text("${_listsData[index]['tanggal_lahir']}",
+                                      style: TextStyle(fontSize: 14)),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("Nama Orang Tua:",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold)),
+                                  Text("${_listsData[index]['nama_ortu']}",
+                                      style: TextStyle(fontSize: 14)),
+                                ],
+                              )
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text("Tutup"),
+                            ),
+                          ],
+                        ),
+                      );
                     },
                   ),
                 ],
